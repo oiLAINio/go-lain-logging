@@ -43,6 +43,7 @@ Initialize the logger once in your main function or initialization code:
         logging.Log.Info("Application started")
     }
 
+
 In other parts of your application, import the logging package and use the logger:
 
     import "github.com/oiLAINio/go-lain-logging"
@@ -50,6 +51,45 @@ In other parts of your application, import the logging package and use the logge
     func someFunction() {
         logging.Log.WithField("module", "someFunction").Info("This is a log message")
     }
+
+
+## Adding fields on the fly:
+
+You can add new fields by using "WithFields()" for example:
+
+	func someFunction() {
+		logging.Log.WithFields(logging.Fields{
+			"module": "someFunction",
+			"test":   "ok",
+		}).Warn("A warning from someFunction")
+	}
+
+If you're adding just one additional field, you can use WithField instead:
+
+	func anotherFunction() {
+		logging.Log.WithField("userID", 12345).Info("User logged in")
+	}
+
+You can also use WithError to include error information in your logs:
+
+	func processData() {
+		err := doSomething()
+		if err != nil {
+			logging.Log.WithFields(logging.Fields{
+				"module": "processData",
+				"step":   "doSomething",
+			}).WithError(err).Error("An error occurred while processing data")
+		}
+	}
+
+	func doSomething() error {
+		// Simulate an error
+		return fmt.Errorf("simulated error")
+	}
+
+Sample Output:
+ERROR   [2024-11-29T12:00:00-07:00]   An error occurred while processing data env=development version=1.0.0 host=localhost module=processData step=doSomething error="simulated error"
+
 
 Adding Hooks:
 
